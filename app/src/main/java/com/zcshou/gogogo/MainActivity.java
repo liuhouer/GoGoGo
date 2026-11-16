@@ -650,7 +650,7 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
         //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
         locationOption.setIsNeedLocationPoiList(false);
         //可选，默认false，设置是否收集CRASH信息，默认收集
-        locationOption.setIgnoreCacheException(true);
+        locationOption.SetIgnoreCacheException(true);
         //可选，默认false，设置是否开启Gps定位
         //locationOption.setOpenGps(true);
         locationOption.setOpenGnss(true);
@@ -1185,9 +1185,13 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
                             JSONObject getRetJson = new JSONObject(resp);
                             String curVersion = GoUtils.getVersionName(MainActivity.this);
 
-                            if (curVersion != null
-                                    && (!getRetJson.getString("name").contains(curVersion)
-                                    || !getRetJson.getString("tag_name").contains(curVersion))) {
+                            String releaseName = getRetJson.optString("name", "");
+                            String tagName = getRetJson.optString("tag_name", "");
+                            boolean hasNewVersion = curVersion != null
+                                    && !releaseName.toLowerCase().contains(curVersion.toLowerCase())
+                                    && !tagName.toLowerCase().contains(curVersion.toLowerCase());
+
+                            if (hasNewVersion) {
                                 final android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(MainActivity.this).create();
                                 alertDialog.show();
                                 alertDialog.setCancelable(false);
